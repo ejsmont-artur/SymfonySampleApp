@@ -11,16 +11,6 @@
     </parameters>
 
     <services>
-        <service id="twig.extension.acme.demo" class="Acme\DemoBundle\Twig\Extension\DemoExtension" public="false">
-            <tag name="twig.extension" />
-            <argument type="service" id="twig.loader" />
-        </service>
-
-        <service id="acme.demo.listener" class="Acme\DemoBundle\EventListener\ControllerListener">
-            <tag name="kernel.event_listener" event="kernel.controller" method="onKernelController" />
-            <argument type="service" id="twig.extension.acme.demo" />
-        </service>
-        
         <!-- added circuit breaker service -->
         <service id="circuitBreaker"
                     class="%circuit_breaker.class%"
