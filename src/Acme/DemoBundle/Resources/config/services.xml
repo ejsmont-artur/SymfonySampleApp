@@ -1,0 +1,35 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <!-- added factory and interface for circuit breaker -->
+    <parameters>
+        <parameter key="circuit_breaker_factory.class">Ejsmont\CircuitBreaker\Factory</parameter>
+        <parameter key="circuit_breaker.class">Ejsmont\CircuitBreaker\CircuitBreakerInterface</parameter>
+    </parameters>
+
+    <services>
+        <service id="twig.extension.acme.demo" class="Acme\DemoBundle\Twig\Extension\DemoExtension" public="false">
+            <tag name="twig.extension" />
+            <argument type="service" id="twig.loader" />
+        </service>
+
+        <service id="acme.demo.listener" class="Acme\DemoBundle\EventListener\ControllerListener">
+            <tag name="kernel.event_listener" event="kernel.controller" method="onKernelController" />
+            <argument type="service" id="twig.extension.acme.demo" />
+        </service>
+        
+        <!-- added circuit breaker service -->
+        <service id="circuitBreaker"
+                    class="%circuit_breaker.class%"
+                    factory-class="%circuit_breaker_factory.class%"
+                    factory-method="getSingleApcInstance"
+        >
+            <argument>30</argument>
+            <argument>300</argument>
+        </service>
+        
+    </services>
+</container>
