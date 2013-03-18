@@ -1,10 +1,11 @@
 # Purpose of this project
+=========================
 
 SymfonySampleApp is a sample Symfony2 application using a few of my components.
 
 I will use it in some examples, tutorials etc.
 
-# Examples of Circuit Breaker Bundle usage
+# Examples of circuit breaker bundle usage
 
 Please see [php-circuit-breaker-bundle](https://github.com/ejsmont-artur/php-circuit-breaker-bundle) for more details.
 
