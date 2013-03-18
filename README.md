@@ -7,6 +7,7 @@ I will use it in some examples, tutorials etc.
 # Example 1 Use of [php-circuit-breaker-bundle](https://github.com/ejsmont-artur/php-circuit-breaker-bundle)
 
 Step 1. Add composer.json dependency on php-circuit-breaker-bundle
+
     "require": {
         "ejsmont-artur/php-circuit-breaker-bundle": "0.1.*"
     },
@@ -20,11 +21,12 @@ Step 2. Override defaults of threshold and timeout in your application services.
         # how many seconds should we wait before allowing a single request
         ejsmont_circuit_breaker.retry_timeout: 5
 
-Step 3. Start using default APC instance
+Step 3. Start using default APC instance in your classes
 
+    # you can get predefined circuit breaker instances from DIC anywhere
     $circuitBreaker = $this->get('apcCircuitBreaker');
 
-You can see more details in the [DemoController::apcCircuitBreakerAction](/ejsmont-artur/SymfonySampleApp/blob/master/src/Acme/DemoBundle/Controller/DemoController.php) method.
+You can see more details in the [DemoController::apcCircuitBreakerAction](https://github.com/ejsmont-artur/SymfonySampleApp/blob/master/src/Acme/DemoBundle/Controller/DemoController.php) method.
 
 # How this project was initially created
 
