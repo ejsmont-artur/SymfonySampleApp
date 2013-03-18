@@ -2,7 +2,9 @@
     "name": "symfony/framework-standard-edition",
     "description": "The \"Symfony Standard Edition\" distribution",
     "autoload": {
-        "psr-0": { "Acme": "src/" }
+        "psr-0": {
+            "Acme": "src/"
+        }
     },
     "require": {
         "php": ">=5.3.3",
@@ -14,13 +16,7 @@
         "sensio/generator-bundle": "2.1.*",
         "jms/security-extra-bundle": "1.2.*",
         "jms/di-extra-bundle": "1.1.*",
-        "ejsmont-artur/php-circuit-breaker": "0.0.1"
-    },
-    "scripts": {
-        "post-install-cmd": [
-        ],
-        "post-update-cmd": [
-        ]
+        "ejsmont-artur/php-circuit-breaker-bundle": "0.1.*"
     },
     "extra": {
         "symfony-app-dir": "app",
