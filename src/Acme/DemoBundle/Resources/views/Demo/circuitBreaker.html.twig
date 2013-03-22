@@ -1,0 +1,19 @@
+{% extends "AcmeDemoBundle::layout.html.twig" %}
+
+{% block content %}
+
+<h1>Status check</h1>
+
+Current {{ service }} service status: {{ status }}, using {{ type }} instance.
+
+<ul>
+    <li><a href="/demo/circuit-breaker/{{ type }}/{{ service }}/status">refresh status</a></li>
+    <li><a href="/demo/circuit-breaker/{{ type }}/{{ service }}/succeed">report success</a></li>
+    <li><a href="/demo/circuit-breaker/{{ type }}/{{ service }}/fail">report failure</a></li>
+</ul>
+
+{% endblock %}
+
+
+
+

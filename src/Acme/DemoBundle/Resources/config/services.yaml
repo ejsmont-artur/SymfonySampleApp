@@ -5,4 +5,17 @@ parameters:
     ejsmont_circuit_breaker.threshold: 3
     # how many seconds should we wait before allowing a single request
     ejsmont_circuit_breaker.retry_timeout: 5
-    
+        
+services:
+    # By overriding this service you can inject any doctrine cache instance
+    circuitBreakerCacheBackend:
+        class: Doctrine\Common\Cache\MemcachedCache
+        calls:
+          -   [setMemcached, ["@memcachedInstance"]]
+          
+    # if you already have instance just change service name
+    memcachedInstance:
+        class: Memcached
+        calls:
+            - [addServer, ['127.0.0.1', 11211, 1]]
+            

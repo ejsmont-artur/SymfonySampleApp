@@ -5,13 +5,18 @@ namespace Acme\DemoBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Doctrine\Common\Cache\FilesystemCache;
+use Ejsmont\CircuitBreakerBundle\Factory;
 
 class DemoController extends Controller {
 
     /**
      * Action uses cache and page links to show you how Circuit Breaker changes its decisions based on what you report.
      * 
-     * 1. Render page /demo/circuit-breaker/sameFake/fail
+     * 1. Go to one of the test urls. Each obrains circuit breaker in different way.
+     *      /demo/circuit-breaker/apc/sameFake/status
+     *      /demo/circuit-breaker/doctrineCache/sameFake/status
+     *      /demo/circuit-breaker/manual/sameFake/status
      * 2. Keep clicking "report failure" till you see that service is marked as down
      * 3. Now service is marked as down so clicking refresh status will tell you its down
      * 4. Once RetryTimeout elapses you will see status available once and then it will be failing again
@@ -23,13 +28,26 @@ class DemoController extends Controller {
      * This is just a simple way to show how component keeps state between requests and decides should the service
      * be accessed or not.
      * 
-     * @Route("/apc-circuit-breaker/{name}/{reportStatus}", name="_demo_cb_fail")
+     * @Route("/circuit-breaker/{type}/{name}/{reportStatus}", name="_demo_cb_fail")
      * @Template()
      */
-    public function apcCircuitBreakerAction($name, $reportStatus = 0) {
-        // use default APC based instance
-        $circuitBreaker = $this->get('apcCircuitBreaker');
+    public function circuitBreakerAction($type, $name, $reportStatus = 0) {
+        // obtain instance in any way you want, here are three different examples
+        if ($type == "apc") {
+            // use default APC based instance
+            $circuitBreaker = $this->get('apcCircuitBreaker');
+        } elseif ($type == "doctrineCache") {
+            // use doctrine/cache backend wired by circuitBreakerCacheBackend cache service name
+            // you can override circuitBreakerCacheBackend service in your application service.yaml
+            $circuitBreaker = $this->get('circuitBreaker');
+        } else {
+            $type = "manual";
+            // use manually assembled instance, allow 7 failures, retry after 10 sec
+            $fileCache = new FilesystemCache('/tmp/cache/', '.cache');
+            $circuitBreaker = Factory::getDoctrineCacheInstance($fileCache, 7, 10);
+        }
 
+        // this is how you would tell circuit breaker weather service is alive or dead
         if ($reportStatus == 'succeed') {
             $circuitBreaker->reportSuccess($name);
         } elseif ($reportStatus == 'fail') {
@@ -39,34 +57,8 @@ class DemoController extends Controller {
         return array(
             'status' => $circuitBreaker->isAvailable($name) ? "available" : "down",
             'service' => $name,
+            'type' => $type,
         );
     }
 
 }
-
-//    /**
-//     * @Route("/circuit-breaker-fail/{name}", name="_demo_cb_fail")
-//     * @Template()
-//     */
-//    public function circuitBreakerAction($name) {
-// use Ejsmont\CircuitBreakerBundle\Factory;
-//
-//        // get instance manually with doctrine APC backend (differnet cache keys)
-//        $apcCache = new \Doctrine\Common\Cache\ApcCache();
-//        $manuallyApcCb = Factory::getDoctrineCacheInstance($apcCache);
-//        if ($manuallyApcCb->isAvailable("UserProfileService2")) {
-//            $name .= ' DoctrineAPC=ok';
-//            $manuallyApcCb->reportFailure('UserProfileService2');
-//        }
-//
-//        // get instance manually with doctrine File backend
-//        $fileCache = new \Doctrine\Common\Cache\FilesystemCache('/tmp/cache/', '.cache');
-//        $manuallyFileCb = Factory::getDoctrineCacheInstance($fileCache);
-//        if ($manuallyFileCb->isAvailable("UserProfileService3")) {
-//            $name .= ' DoctrineAPC=ok';
-//            $manuallyFileCb->reportFailure('UserProfileService3');
-//        }
-//
-//        return array('name' => $name);
-//    }
-//    

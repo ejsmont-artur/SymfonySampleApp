@@ -14,7 +14,7 @@ Please see [php-circuit-breaker-bundle](https://github.com/ejsmont-artur/php-cir
 Step 1. Add composer.json dependency on php-circuit-breaker-bundle
 
     "require": {
-        "ejsmont-artur/php-circuit-breaker-bundle": "0.1.*"
+        "ejsmont-artur/php-circuit-breaker-bundle": "1.0.*"
     },
 
 Step 2. Override defaults of threshold and timeout in your application services.yaml
@@ -32,14 +32,10 @@ Step 3. Start using default APC instance in your classes
 
 You can see more details in the [DemoController::apcCircuitBreakerAction](https://github.com/ejsmont-artur/SymfonySampleApp/blob/master/src/Acme/DemoBundle/Controller/DemoController.php) method.
 
-# Maintenance commands
+You can also see the services.yaml to see how to override the default filecache instance by injecting memcached instance.
 
-Refresh dependencies:
+# Maintenance
 
-    php app/console cache:clear
-    php composer.phar update
+Refresh dependencies + clear cahces + run tests:
 
-Running tests:
-
-    phpunit -c app src/Acme/DemoBundle
-
+    ant full
