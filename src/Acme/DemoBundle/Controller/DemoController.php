@@ -12,6 +12,12 @@ class DemoController extends Controller {
 
     /**
      * Action uses cache and page links to show you how Circuit Breaker changes its decisions based on what you report.
+     * This example shows three different ways to obrain the circuit breaker instance each using different persistance
+     * backend (apc, memcached, fileCache).
+     * 
+     * Actual application would not check user input and the code would have different flow. This is just to show
+     * how state changes based on history results. It also shows that component keeps state between requests and 
+     * decides itself if service should be accessed or not. Your code does not have to worry about that any more.
      * 
      * 1. Go to one of the test urls. Each obrains circuit breaker in different way.
      *      /demo/circuit-breaker/apc/sameFake/status
@@ -24,10 +30,6 @@ class DemoController extends Controller {
      * 5. When you start clicking report success service will come back online but will be more likely to 
      *      be marked as failing untill you gaining more confidence (each success reduces counter from threshold -> 0)
      * 
-     * Actual application would not check user input, it would detect service failures when they happen
-     * This is just a simple way to show how component keeps state between requests and decides should the service
-     * be accessed or not.
-     * 
      * @Route("/circuit-breaker/{type}/{name}/{reportStatus}", name="_demo_cb_fail")
      * @Template()
      */
@@ -37,12 +39,12 @@ class DemoController extends Controller {
             // use default APC based instance
             $circuitBreaker = $this->get('apcCircuitBreaker');
         } elseif ($type == "doctrineCache") {
-            // use doctrine/cache backend wired by circuitBreakerCacheBackend cache service name
-            // you can override circuitBreakerCacheBackend service in your application service.yaml
+            // use doctrine/cache backend injected using "circuitBreakerCacheBackend" service name
+            // "circuitBreaker" service uses "circuitBreakerCacheBackend" which you can override in service.yaml
             $circuitBreaker = $this->get('circuitBreaker');
         } else {
-            $type = "manual";
             // use manually assembled instance, allow 7 failures, retry after 10 sec
+            $type = "manual";
             $fileCache = new FilesystemCache('/tmp/cache/', '.cache');
             $circuitBreaker = Factory::getDoctrineCacheInstance($fileCache, 7, 10);
         }
