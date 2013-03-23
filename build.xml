@@ -69,9 +69,18 @@
         </exec>
     </target>
 
+    <!-- ====================================== SYMFONY 2 RELATED ================================================== -->
+    
+    <target name="s2-bootstrap">
+        <echo>Rebuilding bootstrap.php.cache file ...</echo>
+        <exec executable="php" dir="${basedir}" failonerror="on">
+            <arg line="./vendor/sensio/distribution-bundle/Sensio/Bundle/DistributionBundle/Resources/bin/build_bootstrap.php" />
+        </exec>
+    </target>
+    
     <!-- ============================================= FULL ======================================================== -->
 
-    <target name="phpunit" depends="quick">
+    <target name="phpunit" depends="quick,s2-bootstrap">
         <exec executable="phpunit" dir="${basedir}" failonerror="on">
             <arg line="--configuration app/phpunit.xml.dist" />
         </exec>
